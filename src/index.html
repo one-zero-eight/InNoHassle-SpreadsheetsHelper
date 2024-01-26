@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <base target="_top">
+    <title>Title</title>
+    <script src="https://apis.google.com/js/api.js?onload=onApiLoad"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 10px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        #menu {
+            margin-bottom: 20px;
+        }
+
+        button {
+            background-color: #4285f4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            transition-duration: 0.4s;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #3069c7;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        #warnings {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        #output div {
+            margin-bottom: 10px;
+            padding: 5px;
+            border-bottom: 1px solid #eee;
+        }
+
+        #output div:last-child {
+            border-bottom: none;
+        }
+
+        #output span.linked {
+            cursor: pointer;
+            color: #4285f4;
+        }
+
+        #output span.linked:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<!--  This is sidebar inside Google Spreadsheets which uses Apps Script -->
+
+<!-- Button than calls lint() function from linter.gs -->
+<div id="menu">
+    <button onclick="onLintClick()">Lint</button>
+    <span id="lint-status"></span>
+    <button onclick="onTrimSpacesClick()">Trim spaces</button>
+    <span id="trim-status"></span>
+</div>
+
+<div id="warnings" class="hidden">
+    <h2>Warnings</h2>
+    <div id="output"></div>
+</div>
+
+<script>
+    function onLintClick() {
+        document.getElementById('lint-status').innerHTML = 'Linting...';
+        google.script.run.withSuccessHandler(onLintSuccess).lint()
+    }
+
+    function onLintSuccess(warnings) {
+        document.getElementById('lint-status').innerHTML = '';
+        const warning_div = document.getElementById('warnings')
+        warning_div.classList.remove('hidden');
+        const div = document.getElementById('output');
+        div.innerHTML = '';
+        for (let i = 0; i < warnings.length; i++) {
+            div.innerHTML += renderWarning(warnings[i]) + '<br>';
+        }
+    }
+
+    function renderWarning(warning) {
+        if (warning.range) {
+            return `
+            <div>
+                <span class="linked" onclick="focusOnRange('${warning.range}')">${warning.content}</span>
+            </div>`
+        } else {
+            return `<div>${warning.content}</div>`
+        }
+    }
+
+    function onTrimSpacesClick() {
+        document.getElementById('trim-status').innerHTML = 'Trimming spaces...';
+        google.script.run.withSuccessHandler(onTrimSpacesSuccess).trimSpaces();
+    }
+
+    function onTrimSpacesSuccess() {
+        document.getElementById('trim-status').innerHTML = '';
+    }
+
+    function focusOnRange(range) {
+        google.script.run.withFailureHandler(alertError).focusOnRange(range);
+        google.script.host.editor.focus();
+    }
+
+    function alertError(error) {
+        alert(error);
+    }
+
+</script>
+</body>
+</html>

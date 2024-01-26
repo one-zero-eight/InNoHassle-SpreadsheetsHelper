@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@types/google-apps-script": "^1.0.78",
+    "@types/google.script.client-side": "^0.1.5"
+  }
+}
