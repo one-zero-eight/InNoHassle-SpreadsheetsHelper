@@ -1,13 +1,15 @@
 # InNoHassle-SpreadsheetsHelper
 
-| plugin for Google Spreadsheets to lint and format Innopolis University's schedule
+Plugin for Google Spreadsheets to lint and format Innopolis University's schedule
 
 ## Installation (just using)
 
 1. Open your Google Sheets document
 2. Go to `Extensions` -> `Apps Script`
 3. Paste the code from [main.js](build/main.js) into the editor and save
-4. Reload page with the document, and you should see a new menu item `InNoHassle` with a few options
+4. Also copy [dialog.html](src/dialog.html) to `src` folder and [appsscript.json](appsscript.json) into the editor and
+   save
+5. Reload page with the document, and you should see a new menu item `InNoHassle` with a few options
 
 ## Installation (for developers)
 
