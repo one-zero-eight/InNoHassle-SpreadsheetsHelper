@@ -1,172 +1,236 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <base target="_top">
-    <title>Title</title>
-    <script src="https://apis.google.com/js/api.js?onload=onApiLoad"></script>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 10px;
-            background-color: #f4f4f4;
-            color: #333;
-        }
+  <meta charset="UTF-8" />
+  <base target="_top" />
+  <title>Title</title>
+  <script src="https://apis.google.com/js/api.js?onload=onApiLoad"></script>
+  <style>
+      body {
+          font-family: "Arial", sans-serif;
+          margin: 10px;
+          background-color: #f4f4f4;
+          color: #333;
+      }
 
-        #menu {
-            margin-bottom: 20px;
-        }
+      #menu {
+          margin-bottom: 20px;
+      }
 
-        button {
-            background-color: #4285f4;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin: 4px 2px;
-            transition-duration: 0.4s;
-            cursor: pointer;
-            border-radius: 5px;
-        }
+      button {
+          background-color: #4285f4;
+          color: white;
+          border: none;
+          padding: 10px 20px;
+          text-align: center;
+          text-decoration: none;
+          display: inline-block;
+          font-size: 16px;
+          margin: 4px 2px;
+          transition-duration: 0.4s;
+          cursor: pointer;
+          border-radius: 5px;
+      }
 
-        button:hover {
-            background-color: #3069c7;
-        }
+      button:hover {
+          background-color: #3069c7;
+      }
 
-        .hidden {
-            display: none;
-        }
+      .hidden {
+          display: none;
+      }
 
-        #warnings {
-            background-color: #fff;
-            border: 1px solid #ddd;
-            padding: 10px;
-            border-radius: 5px;
-        }
+      .button-row {
+          margin: 4px 2px;
+          display: flex;
+          width: 100%;
+          gap: 1px;
+      }
 
-        #output div {
-            margin-bottom: 10px;
-            padding: 5px;
-            border-bottom: 1px solid #eee;
-        }
+      .button-row > button {
+          margin-left: 0;
+          margin-right: 0;
+          width: 100%;
+          padding-left: 5px;
+          padding-right: 5px;
+      }
 
-        #output div:last-child {
-            border-bottom: none;
-        }
+      .warning-content {
+          white-space: pre-wrap;
+      }
 
-        #output span.linked {
-            cursor: pointer;
-            color: #4285f4;
-        }
+      #warnings {
+          background-color: #fff;
+          border: 1px solid #ddd;
+          padding: 10px;
+          border-radius: 5px;
+      }
 
-        #output span.linked:hover {
-            text-decoration: underline;
-        }
-    </style>
+      #output div {
+          margin-bottom: 10px;
+          padding: 5px;
+          border-bottom: 1px solid #eee;
+      }
+
+      #output div:last-child {
+          border-bottom: none;
+      }
+
+      #output span.linked {
+          cursor: pointer;
+          color: #4285f4;
+      }
+
+      #output span.linked:hover {
+          text-decoration: underline;
+      }
+  </style>
 </head>
 <body>
-
 <div id="menu">
-    <span id="open-logs"></span>
-    <span id="lint-status"></span>
+  <span id="open-logs"></span>
+  <span id="open-settings"></span><br />
+  <span id="lint-status"></span>
+  <span id="fix-space-status"></span>
+  <span id="select-grids-status"></span>
+  <div class="button-row">
     <button onclick="onLintCommonClick()">Lint Common</button>
     <button onclick="onLintHeaderClick()">Lint Header</button>
     <button onclick="onLintScheduleClick()">Lint Schedule</button>
-    <br>
+  </div>
+  <div class="button-row">
     <button onclick="onFixSpacesClick()">Fix spaces</button>
-    <span id="fix-space-status"></span>
     <button onclick="onSelectGridsClick()">Select grids</button>
-    <span id="select-grids-status"></span>
-    <button onclick="onUnknownSubjects()">Add unknown subjects to settings</button>
+  </div>
+  <div>
+    <button onclick="onUnknownSubjects()">
+      Add unknown subjects to settings
+    </button>
+  </div>
+  <div>
+    <button onclick="onUnknownLocations()">
+      Add unknown locations to settings
+    </button>
+  </div>
 </div>
 
 <div id="warnings" class="hidden">
-    <h2>Warnings</h2>
-    <div id="output"></div>
+  <h2>Warnings</h2>
+  <div id="output"></div>
 </div>
 
 <script>
-    function onLintCommonClick() {
-        document.getElementById('lint-status').innerHTML = 'Linting Common Rules...';
-        google.script.run.withSuccessHandler(onLintSuccess).lintCommon()
-    }
+  let data = JSON.parse(`<?!= JSON.stringify(templateData) ?>`); // Stores the data directly in the javascript code
+  console.log(data);
+  document.getElementById("open-settings").innerHTML = `
+        <a href="https://docs.google.com/spreadsheets/d/${data.spreadsheetId}/edit#gid=${data.settingsGid}&range=${data.settingsRange}" target="_blank">Open settings</a>
+      `;
 
-    function onLintHeaderClick() {
-        document.getElementById('lint-status').innerHTML = 'Linting Header...';
-        google.script.run.withSuccessHandler(onLintSuccess).lintHeader()
-    }
+  function onLintCommonClick() {
+    document.getElementById("lint-status").innerHTML =
+      "Linting Common Rules...";
+    google.script.run.withSuccessHandler(onLintSuccess).lintCommon();
+  }
 
-    function onLintScheduleClick() {
-        document.getElementById('lint-status').innerHTML = 'Linting Schedule...';
-        google.script.run.withSuccessHandler(onLintSuccess).lintSchedule()
-    }
+  function onLintHeaderClick() {
+    document.getElementById("lint-status").innerHTML = "Linting Header...";
+    google.script.run.withSuccessHandler(onLintSuccess).lintHeader();
+  }
 
-    function setWarningsList(warnings) {
-        const warning_div = document.getElementById('warnings')
-        warning_div.classList.remove('hidden');
-        const div = document.getElementById('output');
-        div.innerHTML = '';
-        for (let i = 0; i < warnings.length; i++) {
-            div.innerHTML += renderWarning(warnings[i]) + '<br>';
-        }
-    }
+  function onLintScheduleClick() {
+    document.getElementById("lint-status").innerHTML =
+      "Linting Schedule...";
+    google.script.run.withSuccessHandler(onLintSuccess).lintSchedule();
+  }
 
-    function onLintSuccess(warnings) {
-        document.getElementById('lint-status').innerHTML = '';
-        setWarningsList(warnings);
+  function setWarningsList(warnings) {
+    const warning_div = document.getElementById("warnings");
+    warning_div.classList.remove("hidden");
+    const div = document.getElementById("output");
+    div.innerHTML = "";
+    for (let i = 0; i < warnings.length; i++) {
+      div.innerHTML += renderWarning(warnings[i]) + "<br>";
     }
+  }
 
-    function onFixSpacesClick() {
-        document.getElementById('fix-space-status').innerHTML = 'Fixing spaces...';
-        google.script.run.withSuccessHandler(onFixSpacesSuccess).fixSpaces();
+  function onLintSuccess(warnings) {
+    document.getElementById("lint-status").innerHTML = "";
+    setWarningsList(warnings);
+  }
+
+  function onFixSpacesClick() {
+    document.getElementById("fix-space-status").innerHTML =
+      "Fixing spaces...";
+    google.script.run.withSuccessHandler(onFixSpacesSuccess).fixSpaces();
+  }
+
+  function onFixSpacesSuccess() {
+    document.getElementById("fix-space-status").innerHTML = "";
+  }
+
+  function onSelectGridsClick() {
+    document.getElementById("select-grids-status").innerHTML =
+      "Selecting grids...";
+    google.script.run
+      .withSuccessHandler(onSelectGridsSuccess)
+      .selectScheduleGrids();
+    google.script.host.editor.focus();
+  }
+
+  function onSelectGridsSuccess(warnings) {
+    document.getElementById("select-grids-status").innerHTML = "";
+    setWarningsList(warnings);
+  }
+
+  function onUnknownSubjects() {
+    google.script.run
+      .withSuccessHandler(onUnknownSubjectsSuccess)
+      .addUnknownSubjectsToSettings();
+  }
+
+  function onUnknownSubjectsSuccess() {
+    alert("Unknown subjects added to settings");
+  }
+
+  function onUnknownLocations() {
+    google.script.run
+      .withSuccessHandler(onUnknownLocationsSuccess)
+      .addUnknownLocationsToSettings();
+  }
+
+  function onUnknownLocationsSuccess() {
+    alert("Unknown locations added to settings");
+  }
+
+  function onWarningClick(range) {
+    google.script.run.withFailureHandler(alertError).focusOnRange(range);
+    google.script.host.editor.focus();
+  }
+
+  function onWarningClickFast(range, gid) {
+    const url = `https://docs.google.com/spreadsheets/d/${data.spreadsheetId}/edit#gid=${gid}&range=${range}`;
+    window.open(url);
+  }
+
+  function renderWarning(warning) {
+    if (warning.range) {
+      return `
+                <div>
+<!--                    <span class="linked warning" onclick="onWarningClick(event, '${warning.range}', '${warning.gid}')">${warning.content}</span>-->
+                    <span class="warning-content">${warning.content} (${warning.range})</span>
+                    <div class="button-row">
+                      <button onclick="onWarningClick('${warning.range}')">Go to</button>
+                      <button onclick="onWarningClickFast('${warning.range}', '${warning.gid}')">Open in new tab</button>
+                    </div>
+                </div>`;
+    } else {
+      return `<div class="warning-content">${warning.content}</div>`;
     }
+  }
 
-    function onFixSpacesSuccess() {
-        document.getElementById('fix-space-status').innerHTML = '';
-    }
-
-    function onSelectGridsClick() {
-        document.getElementById('select-grids-status').innerHTML = 'Selecting grids...';
-        google.script.run.withSuccessHandler(onSelectGridsSuccess).selectScheduleGrids();
-        google.script.host.editor.focus();
-    }
-
-    function onSelectGridsSuccess(warnings) {
-        document.getElementById('select-grids-status').innerHTML = '';
-        setWarningsList(warnings);
-    }
-
-    function onUnknownSubjects() {
-        google.script.run.withSuccessHandler(onUnknownSubjectsSuccess).addUnknownSubjectsToSettings();
-    }
-
-    function onUnknownSubjectsSuccess() {
-        alert('Unknown subjects added to settings');
-    }
-
-    function focusOnRange(range) {
-        google.script.run.withFailureHandler(alertError).focusOnRange(range);
-        google.script.host.editor.focus();
-    }
-
-    function renderWarning(warning) {
-        if (warning.range) {
-            return `
-            <div>
-                <span class="linked" onclick="focusOnRange('${warning.range}')">${warning.content}</span>
-            </div>`
-        } else {
-            return `<div>${warning.content}</div>`
-        }
-    }
-
-    function alertError(error) {
-        alert(error);
-    }
-
+  function alertError(error) {
+    alert(error);
+  }
 </script>
 </body>
 </html>

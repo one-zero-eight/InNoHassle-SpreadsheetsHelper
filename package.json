@@ -7,6 +7,10 @@
   "scripts": {
     "build": "tsc --build",
     "push": "npm run build && clasp push",
-    "format": "prettier --write **.{ts,json}"
+    "format": "prettier --write **.{ts,json}",
+    "bpp": "npm run build && npm run format && npm run push"
+  },
+  "devDependencies": {
+    "prettier": "3.2.4"
   }
 }

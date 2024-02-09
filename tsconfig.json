@@ -1,9 +1,6 @@
 {
   "compilerOptions": {
-    "lib": [
-      "esnext",
-      "dom"
-    ],
+    "lib": ["esnext", "dom"],
     "target": "ES2019",
     "module": "None",
     "experimentalDecorators": true,
@@ -12,12 +9,8 @@
     "noUnusedParameters": false,
     "outFile": "build/main.js",
     "skipLibCheck": true,
-    "noEmitOnError": true
+    "noEmitOnError": true,
   },
-  "files": [
-    "main.ts"
-  ],
-  "include": [
-    "**/*.ts"
-  ]
+  "files": ["main.ts"],
+  "include": ["**/*.ts"],
 }

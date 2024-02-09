@@ -1,104 +1,118 @@
 /** BEGIN src/a1notation.ts */
 namespace A1 {
-    export function rangeFromA1Notation(A1Notation: string): {
-        startRow: number,
-        startColumn: number,
-        endRow: number,
-        endColumn: number
-    } {
-        // start:end
-        const match = A1Notation.match(/(^[A-Z]+[0-9]+)|([A-Z]+[0-9]+$)/gm);
+  export function offsetFromA1Notation(A1Notation: string): {
+    startRow: number;
+    startColumn: number;
+    endRow: number;
+    endColumn: number;
+  } {
+    // start:end
+    const match = A1Notation.match(/(^[A-Z]+[0-9]+)|([A-Z]+[0-9]+$)/gm);
 
-        if (match.length !== 2) {
-            throw new Error('The given value was invalid. Cannot convert Google Sheet A1 notation to indexes');
-        }
-
-        const start_notation = match[0];
-        const end_notation = match[1];
-
-        const start = cellFromA1Notation(start_notation);
-        const end = cellFromA1Notation(end_notation);
-
-        return {
-            startRow: start.row,
-            startColumn: start.column,
-            endRow: end.row,
-            endColumn: end.column
-        };
+    if (match.length !== 2) {
+      throw new Error(
+        "The given value was invalid. Cannot convert Google Sheet A1 notation to indexes",
+      );
     }
 
-    function cellFromA1Notation(A1Notation: string) {
-        const match = A1Notation.match(/(^[A-Z]+)|([0-9]+$)/gm);
+    const start_notation = match[0];
+    const end_notation = match[1];
 
-        if (match.length !== 2) {
-            throw new Error('The given value was invalid. Cannot convert Google Sheet A1 notation to indexes');
-        }
+    const start = cellFromA1Notation(start_notation);
+    const end = cellFromA1Notation(end_notation);
 
-        const column_notation = match[0];
-        const row_notation = match[1];
+    return {
+      startRow: start.row,
+      startColumn: start.column,
+      endRow: end.row,
+      endColumn: end.column,
+    };
+  }
 
-        const column = fromColumnA1Notation(column_notation);
-        const row = fromRowA1Notation(row_notation);
+  function cellFromA1Notation(A1Notation: string) {
+    const match = A1Notation.match(/(^[A-Z]+)|([0-9]+$)/gm);
 
-        return {row, column};
+    if (match.length !== 2) {
+      throw new Error(
+        "The given value was invalid. Cannot convert Google Sheet A1 notation to indexes",
+      );
     }
 
-    function fromRowA1Notation(A1Row: string) {
-        const num = parseInt(A1Row, 10);
-        if (Number.isNaN(num)) {
-            throw new Error('The given value was not a valid number. Cannot convert Google Sheet row notation to index');
-        }
+    const column_notation = match[0];
+    const row_notation = match[1];
 
-        return num - 1;
+    const column = fromColumnA1Notation(column_notation);
+    const row = fromRowA1Notation(row_notation);
+
+    return { row, column };
+  }
+
+  function fromRowA1Notation(A1Row: string) {
+    const num = parseInt(A1Row, 10);
+    if (Number.isNaN(num)) {
+      throw new Error(
+        "The given value was not a valid number. Cannot convert Google Sheet row notation to index",
+      );
     }
 
-    function fromColumnA1Notation(A1Column: string) {
-        const A = 'A'.charCodeAt(0);
+    return num;
+  }
 
-        let output = 0;
-        for (let i = 0; i < A1Column.length; i++) {
-            const next_char = A1Column.charAt(i);
-            const column_shift = 26 * i;
+  function fromColumnA1Notation(A1Column: string) {
+    const A = "A".charCodeAt(0);
 
-            output += column_shift + (next_char.charCodeAt(0) - A);
-        }
+    let output = 0;
+    for (let i = 0; i < A1Column.length; i++) {
+      const next_char = A1Column.charAt(i);
+      const column_shift = 26 * i;
 
-        return output;
+      output += column_shift + (next_char.charCodeAt(0) - A);
     }
 
-    export function offsetToA1Notation(offset: Offset) {
-        return rangeToA1Notation(offset.row, offset.column, offset.numRows, offset.numColumns);
+    return output + 1;
+  }
+
+  export function offsetToA1Notation(offset: Offset) {
+    return rangeToA1Notation(
+      offset.row,
+      offset.column,
+      offset.numRows,
+      offset.numColumns,
+    );
+  }
+
+  function rangeToA1Notation(
+    row: number,
+    column: number,
+    numRows: number,
+    numColumns: number,
+  ) {
+    Logger.log("row: " + row);
+    Logger.log("column: " + column);
+    const start = toA1Notation(row, column);
+    const end = toA1Notation(row + numRows - 1, column + numColumns - 1);
+
+    return `${start}:${end}`;
+  }
+
+  function toA1Notation(row: number, column: number) {
+    const row_notation = row.toString();
+    const column_notation = toColumnA1Notation(column);
+
+    return column_notation + row_notation;
+  }
+
+  function toColumnA1Notation(column: number) {
+    const A = "A".charCodeAt(0);
+
+    let output = "";
+    while (column > 0) {
+      const remainder = column % 26;
+      output = String.fromCharCode(A + remainder - 1) + output;
+      column = Math.floor(column / 26);
     }
 
-    function rangeToA1Notation(row: number, column: number, numRows: number, numColumns: number) {
-        const start = toA1Notation(row, column);
-        const end = toA1Notation(row + numRows - 1, column + numColumns - 1);
-
-        return `{start}:{end}`;
-    }
-
-    function toA1Notation(row: number, column: number) {
-        const column_notation = toColumnA1Notation(column);
-        const row_notation = toRowA1Notation(row);
-
-        return column_notation + row_notation.toString();
-    }
-
-    function toRowA1Notation(row: number) {
-        return row + 1;
-    }
-
-    function toColumnA1Notation(column: number) {
-        const A = 'A'.charCodeAt(0);
-
-        let output = '';
-        while (column >= 0) {
-            const remainder = column % 26;
-            output = String.fromCharCode(A + remainder) + output;
-            column = Math.floor(column / 26) - 1;
-        }
-
-        return output;
-    }
+    return output;
+  }
 }
 /** END src/a1notation.ts */
