@@ -178,7 +178,7 @@
   let data = JSON.parse(`<?!= JSON.stringify(templateData) ?>`); // Stores the data directly in the javascript code
   console.log(data);
   document.querySelector(".redirectButton").href = `
-     https:burp//docs.google.com/spreadsheets/d/${data.spreadsheetId}/edit#gid=${data.settingsGid}&range=${data.settingsRange}
+     https://docs.google.com/spreadsheets/d/${data.spreadsheetId}/edit#gid=${data.settingsGid}&range=${data.settingsRange}
     `;
 
   function onLintCommonClick() {
