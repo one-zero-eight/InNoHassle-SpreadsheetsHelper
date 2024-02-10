@@ -31,7 +31,7 @@
           margin: 4px 2px;
           transition-duration: 0.4s;
           cursor: pointer;
-          border-radius: 5px;
+          border-radius: 8px;
       }
 
       .top-menu {
@@ -55,7 +55,7 @@
           margin: 4px 2px;
           transition-duration: 0.4s;
           cursor: pointer;
-          border-radius: 5px;
+          border-radius: 8px;
           height: 38.5px;
           width: 100%;
       }
@@ -90,10 +90,6 @@
           width: 100%;
           padding-left: 5px;
           padding-right: 5px;
-      }
-
-      .button-column {
-          margin-top: 4px;
       }
 
       .warning-content {
@@ -157,12 +153,12 @@
     <button onclick="onFixSpacesClick()">Fix spaces</button>
     <button onclick="onSelectGridsClick()">Select grids</button>
   </div>
-  <div class="button-column">
+  <div class="button-row">
     <button onclick="onUnknownSubjects()">
       Add unknown subjects to settings
     </button>
   </div>
-  <div class="button-column">
+  <div class="button-row">
     <button onclick="onUnknownLocations()">
       Add unknown locations to settings
     </button>
@@ -175,7 +171,7 @@
 </div>
 
 <script>
-  let data = JSON.parse(`<?!= JSON.stringify(templateData) ?>`); // Stores the data directly in the javascript code
+  let data = JSON.parse(`<?!= JSON.stringify(templateData) ?>`);
   console.log(data);
   document.querySelector(".redirectButton").href = `
      https://docs.google.com/spreadsheets/d/${data.spreadsheetId}/edit#gid=${data.settingsGid}&range=${data.settingsRange}
