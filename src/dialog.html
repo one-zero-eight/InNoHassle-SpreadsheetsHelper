@@ -42,7 +42,7 @@
           flex-wrap: wrap;
       }
 
-      .top-menu > a{
+      .top-menu > a {
           background-color: #27374D;
           color: white;
           border: none;
@@ -127,23 +127,26 @@
 <div id="menu">
   <div class="top-menu">
     <!--    <a id="open-logs"></a>-->
-    <a class="redirectButton">
+    <a class="redirectButton" target="_blank">
       <div>
-        <svg class="w-1 h-1 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" height="22" width="22">
-          <path fill-rule="evenodd" d="M17 10v1.1l1 .5.8-.8 1.4 1.4-.8.8.5 1H21v2h-1.1l-.5 1 .8.8-1.4 1.4-.8-.8a4 4 0 0 1-1 .5V20h-2v-1.1a4 4 0 0 1-1-.5l-.8.8-1.4-1.4.8-.8a4 4 0 0 1-.5-1H11v-2h1.1l.5-1-.8-.8 1.4-1.4.8.8a4 4 0 0 1 1-.5V10h2Zm.4 3.6c.4.4.6.8.6 1.4a2 2 0 0 1-3.4 1.4A2 2 0 0 1 16 13c.5 0 1 .2 1.4.6ZM5 8a4 4 0 1 1 8 .7 7 7 0 0 0-3.3 3.2A4 4 0 0 1 5 8Zm4.3 5H7a4 4 0 0 0-4 4v1c0 1.1.9 2 2 2h6.1a7 7 0 0 1-1.8-7Z" clip-rule="evenodd"/>
+        <svg class="w-1 h-1 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+             fill="currentColor" viewBox="0 0 24 24" height="22" width="22">
+          <path fill-rule="evenodd"
+                d="M17 10v1.1l1 .5.8-.8 1.4 1.4-.8.8.5 1H21v2h-1.1l-.5 1 .8.8-1.4 1.4-.8-.8a4 4 0 0 1-1 .5V20h-2v-1.1a4 4 0 0 1-1-.5l-.8.8-1.4-1.4.8-.8a4 4 0 0 1-.5-1H11v-2h1.1l.5-1-.8-.8 1.4-1.4.8.8a4 4 0 0 1 1-.5V10h2Zm.4 3.6c.4.4.6.8.6 1.4a2 2 0 0 1-3.4 1.4A2 2 0 0 1 16 13c.5 0 1 .2 1.4.6ZM5 8a4 4 0 1 1 8 .7 7 7 0 0 0-3.3 3.2A4 4 0 0 1 5 8Zm4.3 5H7a4 4 0 0 0-4 4v1c0 1.1.9 2 2 2h6.1a7 7 0 0 1-1.8-7Z"
+                clip-rule="evenodd" />
         </svg>
       </div>
       Go to settings
     </a>
-    <!--    <a id="lint-status"></a>-->
-    <!--    <a id="fix-space-status"></a>-->
-    <!--    <a id="select-grids-status"></a>-->
+    <span id="lint-status"></span>
+    <span id="fix-space-status"></span>
+    <span id="select-grids-status"></span>
   </div>
-  <div class="button-row">
-    <button>Common</button>
-    <button>Linting</button>
-    <button>Formatting</button>
-  </div>
+  <!--  <div class="button-row">-->
+  <!--    <button>Common</button>-->
+  <!--    <button>Linting</button>-->
+  <!--    <button>Formatting</button>-->
+  <!--  </div>-->
   <div class="button-row">
     <button onclick="onLintCommonClick()">Lint Common</button>
     <button onclick="onLintHeaderClick()">Lint Header</button>
@@ -173,9 +176,8 @@
 <script>
   let data = JSON.parse(`<?!= JSON.stringify(templateData) ?>`);
   console.log(data);
-  document.querySelector(".redirectButton").href = `
-     https://docs.google.com/spreadsheets/d/${data.spreadsheetId}/edit#gid=${data.settingsGid}&range=${data.settingsRange}
-    `;
+  const prefix = atob("aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRz");
+  document.querySelector(".redirectButton").href = `${prefix}/d/${data.spreadsheetId}/edit#gid=${data.settingsGid}&range=${data.settingsRange}`;
 
   function onLintCommonClick() {
     document.getElementById("lint-status").innerHTML =
@@ -259,7 +261,8 @@
   }
 
   function onWarningClickFast(range, gid) {
-    const url = `https://docs.google.com/spreadsheets/d/${data.spreadsheetId}/edit#gid=${gid}&range=${range}`;
+    const prefix = atob("aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRz");
+    const url = `${prefix}/d/${data.spreadsheetId}/edit#gid=${gid}&range=${range}`;
     window.open(url);
   }
 
@@ -267,7 +270,6 @@
     if (warning.range) {
       return `
                 <div>
-<!--                    <span class="linked warning" onclick="onWarningClick(event, '${warning.range}', '${warning.gid}')">${warning.content}</span>-->
                     <span class="warning-content">${warning.content} (${warning.range})</span>
                     <div class="button-row">
                       <button onclick="onWarningClick('${warning.range}')">Go to</button>
