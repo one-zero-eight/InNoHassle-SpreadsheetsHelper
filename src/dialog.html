@@ -136,7 +136,7 @@
                 clip-rule="evenodd" />
         </svg>
       </div>
-      Go to settings
+      <span id="go-to-settings-text"> Go to settings </span>
     </a>
     <span id="lint-status"></span>
     <span id="fix-space-status"></span>
@@ -177,7 +177,17 @@
   let data = JSON.parse(`<?!= JSON.stringify(templateData) ?>`);
   console.log(data);
   const prefix = atob("aHR0cHM6Ly9kb2NzLmdvb2dsZS5jb20vc3ByZWFkc2hlZXRz");
-  document.querySelector(".redirectButton").href = `${prefix}/d/${data.spreadsheetId}/edit#gid=${data.settingsGid}&range=${data.settingsRange}`;
+
+  if (data.settingsGid && data.settingsRange) {
+    document.querySelector(".redirectButton").href = `${prefix}/d/${data.spreadsheetId}/edit#gid=${data.settingsGid}&range=${data.settingsRange}`;
+  } else {
+    // add onclick
+    document.querySelector(".redirectButton").onclick = () => {
+      google.script.run.withFailureHandler(alertError).createSettings();
+    };
+    // change text
+    document.getElementById("go-to-settings-text").innerText = "Create settings";
+  }
 
   function onLintCommonClick() {
     document.getElementById("lint-status").innerHTML =

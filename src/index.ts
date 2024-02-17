@@ -9,8 +9,8 @@ function openLinter() {
   const template = HtmlService.createTemplateFromFile("src/dialog");
   template.templateData = {
     spreadsheetId: Current.getSpreadsheet().getId(),
-    settingsGid: Settings.getSettingsRange().getSheet().getSheetId(),
-    settingsRange: Settings.getSettingsRange().getA1Notation(),
+    settingsGid: Settings.getSettingsRange()?.getSheet().getSheetId(),
+    settingsRange: Settings.getSettingsRange()?.getA1Notation(),
   };
   ui.showSidebar(
     template.evaluate().setTitle("InNoHassle").setWidth(500),
@@ -54,6 +54,13 @@ function focusOnRange(range: string) {
 
 function goToSettings() {
   return Settings.goToSettings();
+}
+
+function createSettings() {
+  if (Settings.getSettingsRange()) {
+    return "Settings already exist";
+  }
+  return Settings.createSettingsRange();
 }
 
 /** END src/index.ts */
